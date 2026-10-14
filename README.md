@@ -36,10 +36,11 @@ status, assignees, due dates, remarks and reminders independently.
    first reminder scheduled, then writes the remark to the selected task. Template, project
    name and start date become read-only (`set_only_once`): the live project and its due
    dates are derived from them.
-6. Each tracker entry owns one remark on one task. Re-saving the entry corrects that
-   remark; re-pointing it at another task moves the remark with it. Report progress on
-   another task of the same project from the **Project Execution** form, or from a tracker
-   entry whose task you change.
+6. Every save **appends** to the selected task's **Task Remarks History** and never
+   overwrites an earlier remark: the pipeline shows the full trail, newest first. To
+   report the next task of the same project, change **Task** on the same tracker entry,
+   write the new remark and save — the previous task keeps everything written on it.
+   Re-saving without changing the remark or status adds nothing.
 7. Completing a task sets `completed_on`, clears the reminder schedule and updates the
    project's progress counters.
 

@@ -128,7 +128,8 @@ class ProjectTaskInstance(Document):
 		)
 
 	def remove_tracker_remark(self, tracker_entry):
-		"""Drop every history row written by a deleted or re-pointed tracker entry."""
+		"""Drop history rows written by a tracker entry. Used by migrations only:
+		normal saves never retract a remark, they append the next one."""
 		remaining = [r for r in self.remarks_history if r.tracker_entry != tracker_entry]
 
 		if len(remaining) == len(self.remarks_history):

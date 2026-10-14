@@ -137,7 +137,9 @@ class ProjectTracker(Document):
 			self.remarks,
 			self.status,
 			concern_person=self.concern_person,
-			entry_datetime=self.entry_datetime,
+			# Each remark is stamped when it is written, not when the entry was first
+			# created: the history is ordered by this, and reminders compare against it.
+			entry_datetime=now_datetime(),
 			entered_by=self.entered_by,
 		)
 		# An explicit Project Status on the entry overrides the progress-derived status.

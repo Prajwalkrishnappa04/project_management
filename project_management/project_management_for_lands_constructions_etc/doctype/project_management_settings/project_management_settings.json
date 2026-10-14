@@ -11,6 +11,7 @@
   "column_break_reminders",
   "allow_manual_reminder_for_completed",
   "reminder_send_hour",
+  "public_base_url",
   "section_recipients",
   "status_recipients"
  ],
@@ -51,6 +52,13 @@
    "fieldname": "reminder_send_hour",
    "fieldtype": "Int",
    "label": "Reminder Send Hour"
+  },
+  {
+   "description": "Public https:// address of this site, used for links in WhatsApp messages. WhatsApp only turns a URL into a tappable link when it has a real domain, so a localhost or 127.0.0.1 address arrives as plain text. Leave blank to use the site URL.",
+   "fieldname": "public_base_url",
+   "fieldtype": "Data",
+   "label": "Public Base URL",
+   "options": "URL"
   },
   {
    "fieldname": "section_recipients",
