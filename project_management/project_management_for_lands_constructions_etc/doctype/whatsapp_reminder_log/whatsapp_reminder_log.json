@@ -1,0 +1,198 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-12 23:40:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "reminder_type",
+  "project_execution",
+  "task_instance",
+  "task_name",
+  "column_break_main",
+  "recipient_employee",
+  "recipient_name",
+  "recipient_number",
+  "sent_by",
+  "attempt_datetime",
+  "section_payload",
+  "message",
+  "section_result",
+  "delivery_status",
+  "idempotency_key",
+  "column_break_result",
+  "provider_message_id",
+  "whatsapp_message",
+  "skip_reason",
+  "error_response"
+ ],
+ "fields": [
+  {
+   "default": "PM-WA-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "PM-WA-.#####",
+   "print_hide": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "reminder_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "Automatic Reminder\nManual Reminder\nStatus Summary",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project_execution",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project Execution",
+   "search_index": 1
+  },
+  {
+   "fieldname": "task_instance",
+   "fieldtype": "Link",
+   "label": "Task Instance",
+   "options": "Project Task Instance",
+   "search_index": 1
+  },
+  {
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task"
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "recipient_employee",
+   "fieldtype": "Link",
+   "label": "Recipient Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "recipient_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Recipient"
+  },
+  {
+   "fieldname": "recipient_number",
+   "fieldtype": "Data",
+   "label": "Recipient Number"
+  },
+  {
+   "fieldname": "sent_by",
+   "fieldtype": "Link",
+   "label": "Triggered By",
+   "options": "User"
+  },
+  {
+   "fieldname": "attempt_datetime",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Attempt Time"
+  },
+  {
+   "fieldname": "section_payload",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text",
+   "label": "Message"
+  },
+  {
+   "fieldname": "section_result",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "default": "Queued",
+   "fieldname": "delivery_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Delivery Status",
+   "options": "Queued\nSent\nFailed\nSkipped",
+   "reqd": 1
+  },
+  {
+   "description": "Deduplication key; a retry with the same key never sends twice (spec 8.3).",
+   "fieldname": "idempotency_key",
+   "fieldtype": "Data",
+   "label": "Idempotency Key",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_result",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "provider_message_id",
+   "fieldtype": "Data",
+   "label": "Provider Message ID"
+  },
+  {
+   "fieldname": "whatsapp_message",
+   "fieldtype": "Link",
+   "label": "WhatsApp Message",
+   "options": "WhatsApp Message"
+  },
+  {
+   "fieldname": "skip_reason",
+   "fieldtype": "Small Text",
+   "label": "Skip Reason"
+  },
+  {
+   "fieldname": "error_response",
+   "fieldtype": "Code",
+   "label": "Error Response",
+   "options": "JSON"
+  }
+ ],
+ "grid_page_length": 50,
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-12 23:40:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Management for lands constructions etc",
+ "name": "WhatsApp Reminder Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Admin Master"
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

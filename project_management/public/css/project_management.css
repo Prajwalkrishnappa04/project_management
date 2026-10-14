@@ -1,0 +1,119 @@
+/* Project Tracker form layout.
+ *
+ * The entry form pairs a text area with the pipeline, so the stock 900px page cap
+ * leaves both columns at ~384px on a 1366px screen. Widen only this doctype's page
+ * and reclaim part of the 277px form sidebar; every rule is scoped to the Project
+ * Tracker page container so no other doctype is affected. */
+
+[id="page-Project Tracker"] {
+	--page-max-width: none;
+	/* 200px is the narrowest width that still shows the full document ID. */
+	--form-sidebar-width: 200px;
+}
+
+[id="page-Project Tracker"] .layout-main-section-wrapper {
+	width: calc(100% - var(--form-sidebar-width));
+	flex: calc(100% - var(--form-sidebar-width));
+}
+
+/* Inputs in a full-width column are capped at 50% by default. */
+[id="page-Project Tracker"] .form-column > form > .input-max-width {
+	max-width: 100%;
+}
+
+[id="page-Project Tracker"] [data-fieldname="remarks"] textarea {
+	min-height: 220px;
+}
+
+/* Below the sidebar breakpoint Frappe stacks the layout; do not fight it. */
+@media (max-width: 991px) {
+	[id="page-Project Tracker"] .layout-main-section-wrapper {
+		width: 100%;
+		flex: 1;
+	}
+}
+
+/* Project Tracker pipeline (spec section 4.2) */
+
+.pm-pipeline {
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-md);
+	padding: 12px;
+	/* Track the viewport instead of a fixed 640px so a tall screen shows more stages. */
+	max-height: calc(100vh - 220px);
+	min-height: 320px;
+	overflow-y: auto;
+	background: var(--card-bg);
+}
+
+.pm-pipeline-head {
+	font-size: var(--text-md);
+	padding-bottom: 8px;
+	margin-bottom: 8px;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.pm-stage {
+	padding: 10px 10px 10px 12px;
+	margin-bottom: 8px;
+	border-left: 3px solid var(--border-color);
+	border-radius: var(--border-radius-sm);
+	background: var(--bg-color);
+}
+
+.pm-stage-active {
+	border-left-color: var(--primary);
+	background: var(--highlight-color);
+}
+
+.pm-stage-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.pm-stage-title {
+	font-weight: 600;
+}
+
+.pm-stage-meta {
+	font-size: var(--text-sm);
+	margin-top: 2px;
+}
+
+.pm-remarks {
+	list-style: none;
+	padding-left: 0;
+	margin: 8px 0 0 0;
+}
+
+.pm-remarks li {
+	padding: 4px 0 4px 12px;
+	border-left: 2px solid var(--border-color);
+	margin-bottom: 4px;
+}
+
+.pm-remark-text {
+	font-size: var(--text-sm);
+	white-space: pre-wrap;
+	font-weight: 400;
+}
+
+/* Only the most recent remark of a task is emphasised; older ones read as context. */
+.pm-remarks li.pm-remark-latest {
+	border-left-color: var(--primary);
+}
+
+.pm-remark-latest .pm-remark-text {
+	font-weight: 700;
+}
+
+.pm-remark-meta {
+	font-size: var(--text-xs);
+}
+
+.pm-remarks-empty {
+	font-size: var(--text-sm);
+	margin-top: 6px;
+}

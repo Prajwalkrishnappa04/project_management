@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-10-12 23:40:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "task",
+  "task_name",
+  "remarks",
+  "status_at_entry",
+  "previous_status",
+  "status_changed",
+  "entry_datetime",
+  "concern_person",
+  "concern_person_name",
+  "entered_by",
+  "tracker_entry"
+ ],
+ "fields": [
+  {
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Task",
+   "options": "Task Master",
+   "read_only": 1
+  },
+  {
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "label": "Task Name",
+   "read_only": 1
+  },
+  {
+   "columns": 4,
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Remarks",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "status_at_entry",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "WIP\nCompleted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_status",
+   "fieldtype": "Select",
+   "label": "Previous Status",
+   "options": "\nWIP\nCompleted",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Set when this entry changed the task status.",
+   "fieldname": "status_changed",
+   "fieldtype": "Check",
+   "label": "Status Changed",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "entry_datetime",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Date & Time",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "concern_person",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Concern Person",
+   "options": "Employee",
+   "read_only": 1
+  },
+  {
+   "fieldname": "concern_person_name",
+   "fieldtype": "Data",
+   "label": "Concern Person Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "entered_by",
+   "fieldtype": "Link",
+   "label": "Entered By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tracker_entry",
+   "fieldtype": "Link",
+   "label": "Tracker Entry",
+   "no_copy": 1,
+   "options": "Project Tracker",
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-12 23:40:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Management for lands constructions etc",
+ "name": "Task Remarks History",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

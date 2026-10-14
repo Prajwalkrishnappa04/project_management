@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-12 23:40:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_reminders",
+  "enable_whatsapp_reminders",
+  "default_reminder_in_days",
+  "column_break_reminders",
+  "allow_manual_reminder_for_completed",
+  "reminder_send_hour",
+  "section_recipients",
+  "status_recipients"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_reminders",
+   "fieldtype": "Section Break",
+   "label": "Reminder Behaviour"
+  },
+  {
+   "default": "1",
+   "description": "Master switch for all outbound WhatsApp messages.",
+   "fieldname": "enable_whatsapp_reminders",
+   "fieldtype": "Check",
+   "label": "Enable WhatsApp Reminders"
+  },
+  {
+   "default": "7",
+   "description": "Fallback only. The interval is read from Project Master per task (spec 8.1).",
+   "fieldname": "default_reminder_in_days",
+   "fieldtype": "Int",
+   "label": "Default Reminder in Days"
+  },
+  {
+   "fieldname": "column_break_reminders",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Spec 13 recommended default: disabled.",
+   "fieldname": "allow_manual_reminder_for_completed",
+   "fieldtype": "Check",
+   "label": "Allow Manual Reminders for Completed Tasks"
+  },
+  {
+   "default": "9",
+   "description": "Hour of day (0-23) at which the daily reminder job dispatches messages.",
+   "fieldname": "reminder_send_hour",
+   "fieldtype": "Int",
+   "label": "Reminder Send Hour"
+  },
+  {
+   "fieldname": "section_recipients",
+   "fieldtype": "Section Break",
+   "label": "Admin Master Status Recipients"
+  },
+  {
+   "fieldname": "status_recipients",
+   "fieldtype": "Table",
+   "label": "Status Recipients",
+   "options": "WhatsApp Status Recipient"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-12 23:40:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Management for lands constructions etc",
+ "name": "Project Management Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "Admin Master"
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

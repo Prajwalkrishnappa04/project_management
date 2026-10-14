@@ -1,0 +1,261 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-12 23:40:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project_execution",
+  "project_title",
+  "task",
+  "task_name",
+  "sequence",
+  "column_break_main",
+  "concern_person",
+  "concern_person_name",
+  "concern_person_mobile",
+  "current_status",
+  "section_schedule",
+  "activation_date",
+  "completion_timeline_in_days",
+  "due_date",
+  "completed_on",
+  "column_break_schedule",
+  "enable_reminders",
+  "reminder_in_days",
+  "last_remark_on",
+  "next_reminder_due",
+  "last_reminder_sent_on",
+  "reminder_state",
+  "section_history",
+  "remarks_history"
+ ],
+ "fields": [
+  {
+   "default": "PM-TASK-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "PM-TASK-.#####",
+   "print_hide": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "project_execution",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project Execution",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "project_execution.project_title",
+   "fieldname": "project_title",
+   "fieldtype": "Data",
+   "label": "Project Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Task",
+   "options": "Task Master",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sequence",
+   "fieldtype": "Int",
+   "label": "Sequence",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "concern_person",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Concern Person",
+   "options": "Employee",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "concern_person.employee_name",
+   "fieldname": "concern_person_name",
+   "fieldtype": "Data",
+   "label": "Concern Person Name",
+   "read_only": 1
+  },
+  {
+   "description": "Defaults to the Concern Person's Mobile; set a number here to override it for this task.",
+   "fetch_from": "concern_person.cell_number",
+   "fetch_if_empty": 1,
+   "fieldname": "concern_person_mobile",
+   "fieldtype": "Data",
+   "label": "Concern Person Mobile",
+   "options": "Phone"
+  },
+  {
+   "default": "WIP",
+   "fieldname": "current_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Current Status",
+   "options": "WIP\nCompleted",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_schedule",
+   "fieldtype": "Section Break",
+   "label": "Schedule & Reminders"
+  },
+  {
+   "fieldname": "activation_date",
+   "fieldtype": "Date",
+   "label": "Activation / Start Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completion_timeline_in_days",
+   "fieldtype": "Int",
+   "label": "Completion Timeline in Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_on",
+   "fieldtype": "Datetime",
+   "label": "Completed On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_reminders",
+   "fieldtype": "Check",
+   "label": "Reminders Enabled"
+  },
+  {
+   "depends_on": "enable_reminders",
+   "fieldname": "reminder_in_days",
+   "fieldtype": "Int",
+   "label": "Reminder in Days"
+  },
+  {
+   "fieldname": "last_remark_on",
+   "fieldtype": "Datetime",
+   "label": "Last Remark On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_reminder_due",
+   "fieldtype": "Datetime",
+   "label": "Next Reminder Due",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "last_reminder_sent_on",
+   "fieldtype": "Datetime",
+   "label": "Last Successful Reminder On",
+   "read_only": 1
+  },
+  {
+   "default": "Scheduled",
+   "fieldname": "reminder_state",
+   "fieldtype": "Select",
+   "label": "Reminder State",
+   "options": "Scheduled\nSent\nSkipped\nFailed\nDisabled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_history",
+   "fieldtype": "Section Break",
+   "label": "Remarks History"
+  },
+  {
+   "fieldname": "remarks_history",
+   "fieldtype": "Table",
+   "label": "Remarks History",
+   "options": "Task Remarks History",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-12 23:40:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Management for lands constructions etc",
+ "name": "Project Task Instance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Admin Master",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "Concern Person",
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "task_name,project_title,current_status",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "task_name",
+ "track_changes": 1
+}

@@ -25,7 +25,7 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/project_management/css/project_management.css"
+app_include_css = "/assets/project_management/css/project_management.css"
 # app_include_js = "/assets/project_management/js/project_management.js"
 
 # include js, css files in header of web template
@@ -85,8 +85,8 @@ app_license = "mit"
 # Installation
 # ------------
 
-# before_install = "project_management.install.before_install"
-# after_install = "project_management.install.after_install"
+after_install = "project_management.install.after_install"
+after_migrate = "project_management.install.after_install"
 
 # Uninstallation
 # ------------
@@ -126,13 +126,15 @@ app_license = "mit"
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+permission_query_conditions = {
+	"Project Task Instance": "project_management.permissions.task_instance_query_conditions",
+	"Project Tracker": "project_management.permissions.tracker_query_conditions",
+}
+
+has_permission = {
+	"Project Task Instance": "project_management.permissions.has_task_instance_permission",
+	"Project Tracker": "project_management.permissions.has_tracker_permission",
+}
 
 # Document Events
 # ---------------
@@ -149,23 +151,11 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"project_management.tasks.all"
-# 	],
-# 	"daily": [
-# 		"project_management.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"project_management.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"project_management.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"project_management.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"hourly_long": [
+		"project_management.tasks.send_due_reminders",
+	],
+}
 
 # Testing
 # -------

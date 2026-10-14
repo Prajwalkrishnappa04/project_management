@@ -1,0 +1,229 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-10-12 23:40:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_project",
+  "naming_series",
+  "project_template",
+  "project_name",
+  "start_date",
+  "project",
+  "task",
+  "task_name",
+  "remarks",
+  "column_break_project",
+  "pipeline_html",
+  "section_entry",
+  "status",
+  "project_status",
+  "task_instance",
+  "section_meta",
+  "entry_datetime",
+  "concern_person",
+  "column_break_meta",
+  "entered_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_project",
+   "fieldtype": "Section Break",
+   "label": "Project"
+  },
+  {
+   "default": "PM-TRK-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Tracker ID",
+   "no_copy": 1,
+   "options": "PM-TRK-.####",
+   "print_hide": 1,
+   "set_only_once": 1
+  },
+  {
+   "description": "Submitted Project Master Template this project is built from.",
+   "fieldname": "project_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project Template",
+   "options": "Project Master Template",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "description": "Name of this live project. Each tracker creates its own project.",
+   "fieldname": "project_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Project Name",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "default": "Today",
+   "description": "Drives every task due date. Used only when the live project is created.",
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Activation / Start Date",
+   "set_only_once": 1
+  },
+  {
+   "description": "Created from the template on the first save and owned by this tracker.",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Live Project",
+   "no_copy": 1,
+   "options": "Project Execution",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_project",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pipeline_html",
+   "fieldtype": "HTML",
+   "label": "Project Pipeline"
+  },
+  {
+   "fieldname": "section_entry",
+   "fieldtype": "Section Break",
+   "label": "Entry Form"
+  },
+  {
+   "depends_on": "eval:doc.project_template || doc.project",
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Task",
+   "options": "Task Master",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "task.task_master",
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "label": "Task Name",
+   "read_only": 1
+  },
+  {
+   "description": "Saving appends to this task's remark history; it never overwrites an earlier remark.",
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Remarks",
+   "reqd": 1
+  },
+  {
+   "default": "WIP",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "WIP\nCompleted",
+   "reqd": 1
+  },
+  {
+   "description": "Set the overall status of the project. Leave blank to keep the progress-derived status.",
+   "fieldname": "project_status",
+   "fieldtype": "Select",
+   "label": "Project Status",
+   "options": "\nActive\nCompleted\nOn Hold\nCancelled"
+  },
+  {
+   "description": "Resolved from the live project and the selected task.",
+   "fieldname": "task_instance",
+   "fieldtype": "Link",
+   "label": "Task Instance",
+   "no_copy": 1,
+   "options": "Project Task Instance",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_meta",
+   "fieldtype": "Section Break",
+   "label": "Entry Details"
+  },
+  {
+   "fieldname": "entry_datetime",
+   "fieldtype": "Datetime",
+   "label": "Date & Time",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "concern_person",
+   "fieldtype": "Link",
+   "label": "Concern Person",
+   "options": "Employee",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "entered_by",
+   "fieldtype": "Link",
+   "label": "Entered By",
+   "options": "User",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-14 23:40:03.472909",
+ "modified_by": "Administrator",
+ "module": "Project Management for lands constructions etc",
+ "name": "Project Tracker",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Admin Master",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Concern Person"
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "project_name,task_name,status",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "project_name",
+ "track_changes": 1
+}
