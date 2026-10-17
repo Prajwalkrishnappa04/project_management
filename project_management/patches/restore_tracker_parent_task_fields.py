@@ -10,6 +10,12 @@ rather than silently sharing one.
 
 import frappe
 
+from project_management.status import IN_PROGRESS
+
+# These rows predate the Open / In Progress / Completed lifecycle: a legacy "WIP"
+# row carried a remark, which now means In Progress.
+LEGACY_STATUS_MAP = {"WIP": IN_PROGRESS}
+
 
 def execute():
 	if not frappe.db.table_exists("Project Tracker Task Update"):
@@ -49,7 +55,7 @@ def execute():
 				"task": first.task,
 				"task_name": first.task_name,
 				"remarks": first.remarks,
-				"status": first.status or "WIP",
+				"status": LEGACY_STATUS_MAP.get(first.status, first.status) or IN_PROGRESS,
 				"task_instance": first.task_instance,
 			},
 			update_modified=False,
@@ -77,7 +83,7 @@ def split_into_own_tracker(parent, row):
 	tracker.start_date = source.start_date
 	tracker.task = row.task
 	tracker.remarks = row.remarks
-	tracker.status = row.status or "WIP"
+	tracker.status = LEGACY_STATUS_MAP.get(row.status, row.status) or IN_PROGRESS
 	tracker.entry_datetime = row.entry_datetime
 	tracker.entered_by = source.entered_by
 	tracker.concern_person = source.concern_person

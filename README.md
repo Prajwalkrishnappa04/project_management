@@ -30,7 +30,9 @@ status, assignees, due dates, remarks and reminders independently.
 3. In **Project Tracker**, the employee picks the **Project Template**, types a **Project
    Name** and optionally a start date. The template's task rows are previewed as a pipeline
    before the save.
-4. In the **Entry Form**, pick the task, write the remarks and set WIP or Completed.
+4. In the **Entry Form**, pick the task and write the remarks. The status defaults to
+   **Open**; saving a remark moves the task to **In Progress** on its own, and only an
+   explicit choice of **Completed** closes it.
 5. On save the tracker creates **its own Project Execution** plus one **Project Task
    Instance** per template row, with `due_date = start date + completion timeline` and the
    first reminder scheduled, then writes the remark to the selected task. Template, project
@@ -43,6 +45,20 @@ status, assignees, due dates, remarks and reminders independently.
    Re-saving without changing the remark or status adds nothing.
 7. Completing a task sets `completed_on`, clears the reminder schedule and updates the
    project's progress counters.
+
+#### Task status
+
+A task instance moves through three states, and only one of them is ever set by hand:
+
+| Status | Set by |
+| --- | --- |
+| **Open** | the default; every task instance is created Open, because nothing has been reported on it yet |
+| **In Progress** | automatic — writing a remark on an Open task promotes it, since the remark *is* the record that work started |
+| **Completed** | manual only; the person writing the remark chooses it, and no progress calculation ever sets or clears it |
+
+The same three states roll up to the project: `Open` while no task has been touched,
+`In Progress` once any task is under way, `Completed` when every task is. A manual
+**On Hold** or **Cancelled** on the project is never overridden by progress.
 
 One tracker owns exactly one project (`Project Tracker.project` is unique): a new tracker
 always creates a new project, even when the project name repeats. Deleting a tracker deletes
@@ -58,7 +74,7 @@ owning tracker).
 the hour set as **Reminder Send Hour** (`0` is a valid hour), then enqueues one background
 job per due task. Before sending, `dispatch_reminder` reloads the task and:
 
-- skips and logs if the task is no longer WIP;
+- skips and logs if the task has been Completed;
 - restarts the timer instead of sending if a newer remark exists;
 - reads the interval from the task instance (copied from Project Master) — never hardcoded;
 - recomputes the due slot as `max(last remark, last successful send) + Reminder in Days`,
@@ -74,11 +90,16 @@ Three outbound kinds, all logged in **WhatsApp Reminder Log**:
 | Kind | Trigger | Body |
 |---|---|---|
 | Automatic Reminder | scheduler | greeting, project, task, latest remark, due date |
-| Manual Reminder | **Send Manual Task Reminder** | same, or a custom message, plus a link to the document it was sent from |
+| Manual Reminder | **Send Manual Task Reminder** | same, plus the sender's optional **Additional Message** and a link to the document it was sent from. The typed note is appended, never substituted, so the project, task and latest remarks always travel with it |
 | Status Summary | **Send Status to Admin Master** | project, status, task counts, date and a link to the document — no per-task breakdown; the recipient opens the link for detail |
 
 Both buttons pass the record currently open, so the link points at that Project Tracker;
 `send_status_to_admin_master` falls back to the Project Execution when called without one.
+
+WhatsApp only renders a URL as a tappable link when its host looks like a real domain, so
+`http://127.0.0.1:8007/...` or a `localhost` address arrives as plain text. Set **Public
+Base URL** in Project Management Settings to the site's public `https://` address; it
+replaces the host in every outgoing link. Left blank, the site's own URL is used.
 
 
 ### Roles
@@ -92,8 +113,8 @@ checks — button visibility is never treated as authorization.
 ### Configuration
 
 Set WhatsApp credentials in **WhatsApp Account** (frappe_whatsapp), then open
-**Project Management Settings** to enable reminders, set the dispatch hour, and add the
-Admin Master status recipients.
+**Project Management Settings** to enable reminders, set the dispatch hour, add the Admin
+Master status recipients, and set the **Public Base URL** used for links in messages.
 
 ### Installation
 

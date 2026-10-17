@@ -18,7 +18,8 @@
   "total_tasks",
   "completed_tasks",
   "column_break_progress",
-  "wip_tasks",
+  "open_tasks",
+  "in_progress_tasks",
   "progress_percent",
   "section_tasks",
   "tasks_html"
@@ -64,13 +65,13 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Active",
+   "default": "Open",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Active\nCompleted\nOn Hold\nCancelled",
+   "options": "Open\nIn Progress\nCompleted\nOn Hold\nCancelled",
    "reqd": 1
   },
   {
@@ -108,9 +109,15 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "wip_tasks",
+   "fieldname": "open_tasks",
    "fieldtype": "Int",
-   "label": "WIP",
+   "label": "Open",
+   "read_only": 1
+  },
+  {
+   "fieldname": "in_progress_tasks",
+   "fieldtype": "Int",
+   "label": "In Progress",
    "read_only": 1
   },
   {

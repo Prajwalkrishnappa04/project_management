@@ -4,7 +4,7 @@
 
 Rules implemented here:
 - the interval is read from the task instance (copied from Project Master); never hardcoded;
-- before sending, the task is reloaded and skipped unless it is still WIP;
+- before sending, the task is reloaded and skipped unless it is still Open or In Progress;
 - the next reminder is computed from the latest remark if one is newer than the last send;
 - a deduplication key per task and due slot prevents duplicate sends on retry;
 - dispatch runs in a background job so a user's Save is never blocked.
@@ -13,6 +13,7 @@ Rules implemented here:
 import frappe
 from frappe.utils import now_datetime
 
+from project_management.status import PENDING_STATUSES
 from project_management.whatsapp import send_whatsapp_message
 
 
@@ -30,7 +31,7 @@ def send_due_reminders():
 	due = frappe.get_all(
 		"Project Task Instance",
 		filters={
-			"current_status": "WIP",
+			"current_status": ["in", PENDING_STATUSES],
 			"enable_reminders": 1,
 			"next_reminder_due": ["<=", now_datetime()],
 		},
@@ -56,10 +57,10 @@ def dispatch_reminder(task_instance):
 
 	# Recheck immediately before dispatch: the task may have been completed
 	# after the scheduler selected it.
-	if task.current_status != "WIP":
+	if task.current_status not in PENDING_STATUSES:
 		task.db_set("reminder_state", "Skipped", update_modified=False)
 		task.db_set("next_reminder_due", None, update_modified=False)
-		_log_skip(task, "Task is no longer WIP")
+		_log_skip(task, f"Task is {task.current_status}; reminders apply to open work only")
 		return
 
 	if not task.enable_reminders or (task.reminder_in_days or 0) <= 0:

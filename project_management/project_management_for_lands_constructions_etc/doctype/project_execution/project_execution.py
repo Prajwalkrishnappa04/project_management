@@ -4,7 +4,14 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, flt, nowdate
+from frappe.utils import flt, nowdate
+
+from project_management.status import (
+	COMPLETED,
+	IN_PROGRESS,
+	MANUAL_PROJECT_STATUSES,
+	OPEN,
+)
 
 
 class ProjectExecution(Document):
@@ -29,7 +36,7 @@ class ProjectExecution(Document):
 			instance.task_name = row.task_name or frappe.db.get_value("Task Master", row.task, "task_master")
 			instance.sequence = row.idx
 			instance.concern_person = row.concern_person
-			instance.current_status = "WIP"
+			instance.current_status = OPEN
 			instance.activation_date = self.start_date
 			instance.completion_timeline_in_days = row.completion_timeline_in_days
 			instance.enable_reminders = row.enable_reminders
@@ -44,39 +51,43 @@ class ProjectExecution(Document):
 		)
 
 		total = len(rows)
-		completed = len([r for r in rows if r.current_status == "Completed"])
-		wip = total - completed
+		completed = len([r for r in rows if r.current_status == COMPLETED])
+		in_progress = len([r for r in rows if r.current_status == IN_PROGRESS])
+		open_tasks = total - completed - in_progress
 		due_dates = [r.due_date for r in rows if r.due_date]
 
 		self.db_set(
 			{
 				"total_tasks": total,
 				"completed_tasks": completed,
-				"wip_tasks": wip,
+				"in_progress_tasks": in_progress,
+				"open_tasks": open_tasks,
 				"progress_percent": flt(completed * 100.0 / total, 2) if total else 0,
 				"expected_end_date": max(due_dates) if due_dates else None,
-				"status": self.derive_status(total, completed, status),
+				"status": self.derive_status(total, completed, in_progress, status),
 			},
 			update_modified=False,
 		)
 
-	def derive_status(self, total, completed, status=None):
-		"""An explicit choice always wins. Otherwise every task being done promotes the
-		project to Completed; a Cancelled project is never revived by progress."""
+	def derive_status(self, total, completed, in_progress, status=None):
+		"""An explicit choice always wins. Otherwise the project mirrors its tasks:
+		every task done is Completed, any task under way is In Progress, and a project
+		whose tasks are all untouched is still Open.
+
+		A manual On Hold or Cancelled is never overridden by progress."""
 		if status:
 			return status
 
-		if self.status == "Cancelled":
+		if self.status in MANUAL_PROJECT_STATUSES:
 			return self.status
 
 		if total and completed == total:
-			return "Completed"
+			return COMPLETED
 
-		# Partial progress must not demote a manual On Hold back to Active.
-		if self.status == "On Hold":
-			return self.status
+		if in_progress or completed:
+			return IN_PROGRESS
 
-		return "Active"
+		return OPEN
 
 	@frappe.whitelist()
 	def get_pipeline(self):

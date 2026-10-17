@@ -2,6 +2,8 @@
 # For license information, please see license.txt
 """Whitelisted endpoints for the Project Tracker screen (spec sections 4, 5, 9, 10)."""
 
+from urllib.parse import urljoin, urlparse
+
 import frappe
 from frappe import _
 from frappe.utils import get_url_to_form, now_datetime
@@ -10,6 +12,7 @@ from project_management.permissions import can_manage_all_tasks, require_reminde
 from project_management.project_management_for_lands_constructions_etc.doctype.project_task_instance.project_task_instance import (
 	get_employee_for_user,
 )
+from project_management.status import COMPLETED, IN_PROGRESS, OPEN
 from project_management.whatsapp import send_whatsapp_message
 
 
@@ -18,6 +21,10 @@ def document_url(document):
 
 	`document` is `[doctype, name]` (as the client sends it) or a tuple. Returns an
 	empty string when it is missing or malformed, so the caller can fall back.
+
+	WhatsApp only turns a URL into a tappable link when the host looks like a real
+	domain; `localhost` and bare IPs arrive as plain text. Project Management
+	Settings therefore carries a Public Base URL that replaces the site's own host.
 	"""
 	if isinstance(document, str):
 		document = frappe.parse_json(document)
@@ -29,7 +36,12 @@ def document_url(document):
 	if not frappe.db.exists(doctype, name):
 		return ""
 
-	return get_url_to_form(doctype, name)
+	url = get_url_to_form(doctype, name)
+	base = (frappe.db.get_single_value("Project Management Settings", "public_base_url") or "").strip()
+	if not base:
+		return url
+
+	return urljoin(base if base.endswith("/") else base + "/", urlparse(url).path.lstrip("/"))
 
 
 @frappe.whitelist()
@@ -139,7 +151,7 @@ def get_project_pipeline(project):
 	execution = frappe.db.get_value(
 		"Project Execution",
 		project,
-		["project_title", "status", "total_tasks", "completed_tasks"],
+		["project_title", "status"],
 		as_dict=True,
 	)
 	if not execution:
@@ -177,12 +189,19 @@ def get_project_pipeline(project):
 			order_by="entry_datetime asc, idx asc",
 		)
 
+	# Counted from the rows just read rather than the project's stored counters, so the
+	# breakdown can never disagree with the stages rendered beside it.
+	completed = len([t for t in tasks if t["current_status"] == COMPLETED])
+	in_progress = len([t for t in tasks if t["current_status"] == IN_PROGRESS])
+
 	return {
 		"project": project,
 		"project_title": execution.project_title,
 		"project_status": execution.status,
-		"total": execution.total_tasks or len(tasks),
-		"completed": execution.completed_tasks or 0,
+		"total": len(tasks),
+		"completed": completed,
+		"in_progress": in_progress,
+		"open": len(tasks) - completed - in_progress,
 		"tasks": tasks,
 	}
 
@@ -190,7 +209,8 @@ def get_project_pipeline(project):
 @frappe.whitelist()
 def get_template_preview(template):
 	"""The template's task rows shaped like a pipeline, for the tracker before the
-	live project exists. No status or remarks exist yet, so stages render as planned."""
+	live project exists. No remarks exist yet, so every stage previews as Open —
+	which is exactly the status saving will create it with."""
 	if not template:
 		return None
 
@@ -203,7 +223,7 @@ def get_template_preview(template):
 			"sequence": row.idx,
 			"task": row.task,
 			"task_name": row.task_name,
-			"current_status": "Planned",
+			"current_status": OPEN,
 			"concern_person": row.concern_person,
 			"concern_person_name": row.employee_name,
 			"due_date": None,
@@ -218,6 +238,8 @@ def get_template_preview(template):
 		"project_status": "Not Created",
 		"total": len(tasks),
 		"completed": 0,
+		"in_progress": 0,
+		"open": len(tasks),
 		"tasks": tasks,
 	}
 
@@ -231,13 +253,13 @@ def send_status_to_admin_master(project, document=None):
 	require_reminder_permission()
 
 	pipeline = get_project_pipeline(project)
-	wip = pipeline["total"] - pipeline["completed"]
 
 	lines = [
 		"PROJECT STATUS OVERVIEW",
 		f"Project: {pipeline['project_title']}",
 		f"Project Status: {pipeline['project_status']}",
-		f"Total tasks: {pipeline['total']} | Completed: {pipeline['completed']} | WIP: {wip}",
+		f"Total tasks: {pipeline['total']} | Completed: {pipeline['completed']}"
+		f" | In Progress: {pipeline['in_progress']} | Open: {pipeline['open']}",
 		f"Latest update: {frappe.utils.format_datetime(now_datetime(), 'd MMMM yyyy')}",
 		f"View: {document_url(document) or document_url(('Project Execution', project))}",
 	]
@@ -276,14 +298,16 @@ def send_manual_task_reminder(task_instance, message=None, document=None):
 	task = frappe.get_doc("Project Task Instance", task_instance)
 	settings = frappe.get_cached_doc("Project Management Settings")
 
-	if task.current_status == "Completed" and not settings.allow_manual_reminder_for_completed:
+	if task.current_status == COMPLETED and not settings.allow_manual_reminder_for_completed:
 		frappe.throw(
 			_("Task {0} is Completed. Manual reminders for completed tasks are disabled.").format(
 				frappe.bold(task.task_name)
 			)
 		)
 
-	body = (message or "").strip() or build_reminder_message(task)
+	# The typed text is an extra note, not a replacement: the recipient always needs
+	# the project, task and latest remark to know what the message is about.
+	body = build_reminder_message(task, note=message)
 
 	link = document_url(document)
 	if link:
@@ -305,8 +329,13 @@ def send_manual_task_reminder(task_instance, message=None, document=None):
 	return result
 
 
-def build_reminder_message(task):
-	"""Spec 6.1: automatic task reminder body."""
+def build_reminder_message(task, note=None):
+	"""Spec 6.1: task reminder body — project, task, latest remark, due date.
+
+	`note` is the free-text a sender typed in the Manual Task Reminder dialog. It is
+	appended, never substituted, so a one-line note still arrives with the project and
+	task it refers to.
+	"""
 	latest = frappe.db.get_value(
 		"Task Remarks History",
 		{"parent": task.name, "parenttype": "Project Task Instance"},
@@ -330,6 +359,10 @@ def build_reminder_message(task):
 
 	if task.due_date:
 		lines.append(f"Due date: {frappe.utils.format_date(task.due_date)}")
+
+	note = (note or "").strip()
+	if note:
+		lines.append(f"Message: {note}")
 
 	lines.append("Kindly update the latest status and remarks.")
 	return "\n".join(lines)

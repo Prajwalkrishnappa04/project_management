@@ -8,6 +8,14 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_days, get_datetime, getdate, now_datetime
 
+from project_management.status import (
+	COMPLETED,
+	OPEN,
+	PENDING_STATUSES,
+	TASK_STATUSES,
+	status_for_remark,
+)
+
 
 class ProjectTaskInstance(Document):
 	def validate(self):
@@ -21,7 +29,7 @@ class ProjectTaskInstance(Document):
 
 	def sync_reminder_schedule(self):
 		"""Spec 8.1: keep last remark, next due, last successful send and state consistent."""
-		if self.current_status == "Completed":
+		if self.current_status == COMPLETED:
 			self.next_reminder_due = None
 			self.reminder_state = "Disabled"
 			if not self.completed_on:
@@ -76,12 +84,16 @@ class ProjectTaskInstance(Document):
 
 		A save that repeats the most recent remark and status adds nothing, so
 		re-saving an unchanged form cannot pad the history.
+
+		A remark is evidence the work has started, so an Open task is promoted to
+		In Progress here. Completed is never derived: it only arrives because the
+		person writing the remark chose it.
 		"""
 		remarks = (remarks or "").strip()
 		if not remarks:
 			frappe.throw(_("Remarks are required"))
 
-		status = status or self.current_status
+		status = status_for_remark(status or self.current_status)
 		employee = concern_person or get_employee_for_user(frappe.session.user) or self.concern_person
 
 		previous = self.latest_remark()
@@ -145,19 +157,22 @@ class ProjectTaskInstance(Document):
 
 	def recompute_from_history(self):
 		"""Derive current status and last remark time from the latest history row,
-		so edits and deletions of tracker entries cannot leave a stale status."""
+		so edits and deletions of tracker entries cannot leave a stale status.
+
+		A task whose remarks were all withdrawn has no recorded work, so it falls
+		back to Open rather than keeping the status those remarks produced."""
 		latest = self.latest_remark()
 
 		if not latest:
 			self.last_remark_on = None
-			self.current_status = "WIP"
+			self.current_status = OPEN
 		else:
 			self.last_remark_on = latest.entry_datetime
-			if latest.status_at_entry in ("WIP", "Completed"):
+			if latest.status_at_entry in TASK_STATUSES:
 				self.current_status = latest.status_at_entry
 
-		if self.current_status == "WIP":
-			# A new remark on a WIP task resets the reminder timer (spec 8.1).
+		if self.current_status in PENDING_STATUSES:
+			# A new remark on an unfinished task resets the reminder timer (spec 8.1).
 			self.reminder_state = "Scheduled"
 
 	def mark_reminder_sent(self, sent_on=None):

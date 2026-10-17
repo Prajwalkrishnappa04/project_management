@@ -120,13 +120,14 @@
    "reqd": 1
   },
   {
-   "default": "WIP",
+   "default": "Open",
+   "description": "A new task starts Open. Saving a remark moves it to In Progress automatically; pick Completed to close it.",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "WIP\nCompleted",
+   "options": "Open\nIn Progress\nCompleted",
    "reqd": 1
   },
   {
@@ -134,7 +135,7 @@
    "fieldname": "project_status",
    "fieldtype": "Select",
    "label": "Project Status",
-   "options": "\nActive\nCompleted\nOn Hold\nCancelled"
+   "options": "\nOpen\nIn Progress\nCompleted\nOn Hold\nCancelled"
   },
   {
    "description": "Resolved from the live project and the selected task.",

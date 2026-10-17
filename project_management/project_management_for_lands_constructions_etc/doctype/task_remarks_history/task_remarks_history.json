@@ -47,14 +47,14 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "WIP\nCompleted",
+   "options": "Open\nIn Progress\nCompleted",
    "read_only": 1
   },
   {
    "fieldname": "previous_status",
    "fieldtype": "Select",
    "label": "Previous Status",
-   "options": "\nWIP\nCompleted",
+   "options": "\nOpen\nIn Progress\nCompleted",
    "read_only": 1
   },
   {

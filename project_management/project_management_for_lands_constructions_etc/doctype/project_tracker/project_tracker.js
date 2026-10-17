@@ -26,7 +26,7 @@ frappe.ui.form.on("Project Tracker", {
 		frm.trigger("render_pipeline");
 
 		if (frm.is_new()) {
-			frm.set_value("status", frm.doc.status || "WIP");
+			frm.set_value("status", frm.doc.status || "Open");
 			if (!frm.doc.start_date) {
 				frm.set_value("start_date", frappe.datetime.get_today());
 			}
@@ -188,7 +188,7 @@ frappe.ui.form.on("Project Tracker", {
 
 	task(frm) {
 		// Start from the task's current status so saving a remark cannot silently
-		// demote a Completed task back to WIP.
+		// reopen a Completed task or hide that work is already under way.
 		if (frm.doc.project && frm.doc.task) {
 			frappe.call({
 				method: "frappe.client.get_value",
@@ -216,11 +216,12 @@ frappe.ui.form.on("Project Tracker", {
 
 function build_pipeline_html(data, active_task) {
 	const esc = frappe.utils.escape_html;
-	const color = { Completed: "green", WIP: "orange", Planned: "gray" };
+	const color = { Completed: "green", "In Progress": "blue", Open: "orange" };
 	const project_color = {
 		Completed: "green",
-		Active: "blue",
-		"On Hold": "orange",
+		"In Progress": "blue",
+		Open: "orange",
+		"On Hold": "yellow",
 		Cancelled: "red",
 		"Not Created": "gray",
 	};
@@ -331,7 +332,10 @@ function show_manual_reminder_dialog(default_project, document) {
 			{
 				fieldname: "message",
 				fieldtype: "Small Text",
-				label: __("Task Remarks / Custom Message"),
+				label: __("Additional Message"),
+				description: __(
+					"Optional. Added to the reminder, which always carries the project, task and latest remarks."
+				),
 			},
 			{
 				fieldname: "recipient",

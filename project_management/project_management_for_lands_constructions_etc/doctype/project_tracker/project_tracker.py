@@ -9,6 +9,7 @@ from frappe.utils import now_datetime, nowdate
 from project_management.project_management_for_lands_constructions_etc.doctype.project_task_instance.project_task_instance import (
 	get_employee_for_user,
 )
+from project_management.status import status_for_remark
 
 
 class ProjectTracker(Document):
@@ -38,6 +39,12 @@ class ProjectTracker(Document):
 		self.remarks = (self.remarks or "").strip()
 		if not self.remarks:
 			frappe.throw(_("Remarks are required"))
+
+		# Every tracker entry carries a remark, so an entry left at Open is reporting
+		# that work has started: record In Progress on the entry itself, not only on
+		# the task instance, so the saved entry and the task never disagree.
+		# Completed is only ever reached because the user picked it.
+		self.status = status_for_remark(self.status)
 
 	def create_project(self):
 		"""Create this tracker's own live project from the template."""
