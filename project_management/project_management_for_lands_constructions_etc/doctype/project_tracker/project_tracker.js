@@ -33,9 +33,9 @@ frappe.ui.form.on("Project Tracker", {
 		}
 
 		if (frm.doc.project) {
-			frm.add_custom_button(__("Open Live Project"), () => {
-				frappe.set_route("Form", "Project Execution", frm.doc.project);
-			});
+			// frm.add_custom_button(__("Open Live Project"), () => {
+			// 	frappe.set_route("Form", "Project Execution", frm.doc.project);
+			// });
 		}
 
 		frappe.call("project_management.permissions.can_manage_all_tasks").then((r) => {

@@ -3,39 +3,39 @@
 
 frappe.ui.form.on("Project Master Template", {
 	refresh(frm) {
-		if (frm.doc.docstatus === 1 && !frm.doc.disabled) {
-			frm.add_custom_button(__("Create Live Project"), () => {
-				const d = new frappe.ui.Dialog({
-					title: __("Create Live Project"),
-					fields: [
-						{
-							fieldname: "project_title",
-							fieldtype: "Data",
-							label: __("Project Title"),
-							reqd: 1,
-							default: frm.doc.project_name,
-						},
-						{
-							fieldname: "start_date",
-							fieldtype: "Date",
-							label: __("Start Date"),
-							reqd: 1,
-							default: frappe.datetime.get_today(),
-						},
-					],
-					primary_action_label: __("Create"),
-					primary_action(values) {
-						frm.call("create_project_execution", values).then((r) => {
-							if (r.message) {
-								d.hide();
-								frappe.set_route("Form", "Project Execution", r.message);
-							}
-						});
-					},
-				});
-				d.show();
-			}).addClass("btn-primary");
-		}
+		// if (frm.doc.docstatus === 1 && !frm.doc.disabled) {
+		// 	frm.add_custom_button(__("Create Live Project"), () => {
+		// 		const d = new frappe.ui.Dialog({
+		// 			title: __("Create Live Project"),
+		// 			fields: [
+		// 				{
+		// 					fieldname: "project_title",
+		// 					fieldtype: "Data",
+		// 					label: __("Project Title"),
+		// 					reqd: 1,
+		// 					default: frm.doc.project_name,
+		// 				},
+		// 				{
+		// 					fieldname: "start_date",
+		// 					fieldtype: "Date",
+		// 					label: __("Start Date"),
+		// 					reqd: 1,
+		// 					default: frappe.datetime.get_today(),
+		// 				},
+		// 			],
+		// 			primary_action_label: __("Create"),
+		// 			primary_action(values) {
+		// 				frm.call("create_project_execution", values).then((r) => {
+		// 					if (r.message) {
+		// 						d.hide();
+		// 						frappe.set_route("Form", "Project Execution", r.message);
+		// 					}
+		// 				});
+		// 			},
+		// 		});
+		// 		d.show();
+		// 	}).addClass("btn-primary");
+		// }
 	},
 });
 

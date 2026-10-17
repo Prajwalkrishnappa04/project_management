@@ -36,6 +36,7 @@
    "default": "PM-TRK-.####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Tracker ID",
    "no_copy": 1,
    "options": "PM-TRK-.####",
@@ -74,6 +75,7 @@
    "description": "Created from the template on the first save and owned by this tracker.",
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_standard_filter": 1,
    "label": "Live Project",
    "no_copy": 1,
@@ -93,6 +95,7 @@
   {
    "fieldname": "section_entry",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Entry Form"
   },
   {
@@ -181,7 +184,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-14 23:40:03.472909",
+ "modified": "2026-10-17 14:43:28.184607",
  "modified_by": "Administrator",
  "module": "Project Management for lands constructions etc",
  "name": "Project Tracker",
